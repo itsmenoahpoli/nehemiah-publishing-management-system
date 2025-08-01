@@ -6,6 +6,45 @@ import { authenticateToken, requireAnyRole } from "../middlewares/auth";
 const router = Router();
 const prisma = new PrismaClient();
 
+/**
+ * @swagger
+ * /billing:
+ *   get:
+ *     summary: Get all bills with pagination and status filter
+ *     tags: [Billing]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [PENDING, PAID, CANCELLED]
+ *         description: Filter by bill status
+ *     responses:
+ *       200:
+ *         description: List of bills
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PaginationResponse'
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
+ */
 router.get(
   "/",
   authenticateToken,
@@ -62,6 +101,70 @@ router.get(
   }
 );
 
+/**
+ * @swagger
+ * /billing:
+ *   post:
+ *     summary: Create a new bill
+ *     tags: [Billing]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - customerId
+ *               - items
+ *             properties:
+ *               customerId:
+ *                 type: integer
+ *                 minimum: 1
+ *               items:
+ *                 type: array
+ *                 minItems: 1
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - bookId
+ *                     - quantity
+ *                   properties:
+ *                     bookId:
+ *                       type: integer
+ *                       minimum: 1
+ *                     quantity:
+ *                       type: integer
+ *                       minimum: 1
+ *               paymentMethod:
+ *                 type: string
+ *                 enum: [CASH, CARD, BANK_TRANSFER]
+ *     responses:
+ *       201:
+ *         description: Bill created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/Bill'
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
+ */
 router.post(
   "/",
   authenticateToken,

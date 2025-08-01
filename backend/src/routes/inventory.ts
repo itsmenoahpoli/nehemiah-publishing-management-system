@@ -6,6 +6,44 @@ import { authenticateToken, requireAnyRole } from "../middlewares/auth";
 const router = Router();
 const prisma = new PrismaClient();
 
+/**
+ * @swagger
+ * /inventory/warehouse:
+ *   get:
+ *     summary: Get warehouse inventory with pagination and search
+ *     tags: [Inventory]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search term for book title or ISBN
+ *     responses:
+ *       200:
+ *         description: Warehouse inventory list
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PaginationResponse'
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
+ */
 router.get(
   "/warehouse",
   authenticateToken,
@@ -68,6 +106,50 @@ router.get(
   }
 );
 
+/**
+ * @swagger
+ * /inventory/schools:
+ *   get:
+ *     summary: Get school inventory with pagination, search and status filter
+ *     tags: [Inventory]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search term for school name
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [PENDING, APPROVED, REJECTED]
+ *         description: Filter by inventory status
+ *     responses:
+ *       200:
+ *         description: School inventory list
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PaginationResponse'
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
+ */
 router.get(
   "/schools",
   authenticateToken,

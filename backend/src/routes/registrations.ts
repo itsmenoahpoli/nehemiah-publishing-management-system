@@ -6,6 +6,47 @@ import { authenticateToken, requireAdmin } from "../middlewares/auth";
 const router = Router();
 const prisma = new PrismaClient();
 
+/**
+ * @swagger
+ * /registrations:
+ *   get:
+ *     summary: Get school registrations with pagination and status filter
+ *     tags: [Registrations]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [approved, pending]
+ *         description: Filter by approval status
+ *     responses:
+ *       200:
+ *         description: List of school registrations
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PaginationResponse'
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden - Admin access required
+ *       500:
+ *         description: Internal server error
+ */
 router.get(
   "/",
   authenticateToken,
@@ -46,6 +87,59 @@ router.get(
   }
 );
 
+/**
+ * @swagger
+ * /registrations:
+ *   post:
+ *     summary: Submit a new school registration
+ *     tags: [Registrations]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - schoolName
+ *               - address
+ *               - contactPerson
+ *               - phone
+ *               - email
+ *             properties:
+ *               schoolName:
+ *                 type: string
+ *               address:
+ *                 type: string
+ *               contactPerson:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 format: email
+ *     responses:
+ *       201:
+ *         description: School registration submitted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/SchoolProfile'
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Validation error or school already exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error
+ */
 router.post(
   "/",
   [

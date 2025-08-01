@@ -5,6 +5,53 @@ import { authenticateToken, requireAnyRole } from "../middlewares/auth";
 const router = Router();
 const prisma = new PrismaClient();
 
+/**
+ * @swagger
+ * /reports/sales:
+ *   get:
+ *     summary: Get sales report with date range filter
+ *     tags: [Reports]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Start date for sales report (YYYY-MM-DD)
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: End date for sales report (YYYY-MM-DD)
+ *     responses:
+ *       200:
+ *         description: Sales report data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     bills:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/Bill'
+ *                     totalRevenue:
+ *                       type: number
+ *                     totalOrders:
+ *                       type: integer
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
+ */
 router.get(
   "/sales",
   authenticateToken,
@@ -61,6 +108,57 @@ router.get(
   }
 );
 
+/**
+ * @swagger
+ * /reports/inventory:
+ *   get:
+ *     summary: Get inventory report with stock levels
+ *     tags: [Reports]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Inventory report data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     warehouseStocks:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/Stock'
+ *                     schoolStocks:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: integer
+ *                           schoolId:
+ *                             type: integer
+ *                           bookId:
+ *                             type: integer
+ *                           quantity:
+ *                             type: integer
+ *                           school:
+ *                             $ref: '#/components/schemas/SchoolProfile'
+ *                           book:
+ *                             $ref: '#/components/schemas/Book'
+ *                     lowStockBooks:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/Book'
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
+ */
 router.get(
   "/inventory",
   authenticateToken,

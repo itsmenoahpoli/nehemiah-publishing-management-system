@@ -162,32 +162,39 @@ router.put(
           .json({ message: "Insufficient stock in warehouse" });
       }
 
-      await prisma.$transaction([
-        prisma.schoolInventory.update({
+      await prisma.$transaction(async (tx) => {
+        await tx.schoolInventory.update({
           where: { id: Number(id) },
           data: { status: "APPROVED" },
-        }),
-        prisma.warehouseStock.update({
+        });
+
+        await tx.warehouseStock.update({
           where: { id: warehouseStock.id },
           data: { quantity: warehouseStock.quantity - request.quantity },
-        }),
-        prisma.schoolStock.upsert({
+        });
+
+        const existingStock = await tx.schoolStock.findFirst({
           where: {
-            schoolId_bookId: {
-              schoolId: request.schoolId,
-              bookId: request.bookId,
-            },
-          },
-          update: {
-            quantity: { increment: request.quantity },
-          },
-          create: {
             schoolId: request.schoolId,
             bookId: request.bookId,
-            quantity: request.quantity,
           },
-        }),
-      ]);
+        });
+
+        if (existingStock) {
+          await tx.schoolStock.update({
+            where: { id: existingStock.id },
+            data: { quantity: existingStock.quantity + request.quantity },
+          });
+        } else {
+          await tx.schoolStock.create({
+            data: {
+              schoolId: request.schoolId,
+              bookId: request.bookId,
+              quantity: request.quantity,
+            },
+          });
+        }
+      });
 
       res.json({
         success: true,

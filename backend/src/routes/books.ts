@@ -10,6 +10,49 @@ import {
 const router = Router();
 const prisma = new PrismaClient();
 
+/**
+ * @swagger
+ * /books:
+ *   get:
+ *     summary: Get all books with pagination and search
+ *     tags: [Books]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search term for title, ISBN, or publisher
+ *       - in: query
+ *         name: author
+ *         schema:
+ *           type: string
+ *         description: Filter by author name
+ *     responses:
+ *       200:
+ *         description: List of books
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PaginationResponse'
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
+ */
 router.get(
   "/",
   authenticateToken,
@@ -79,6 +122,40 @@ router.get(
   }
 );
 
+/**
+ * @swagger
+ * /books/{id}:
+ *   get:
+ *     summary: Get a specific book by ID
+ *     tags: [Books]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Book ID
+ *     responses:
+ *       200:
+ *         description: Book details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/Book'
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Book not found
+ *       500:
+ *         description: Internal server error
+ */
 router.get(
   "/:id",
   authenticateToken,
@@ -116,6 +193,87 @@ router.get(
   }
 );
 
+/**
+ * @swagger
+ * /books:
+ *   post:
+ *     summary: Create a new book
+ *     tags: [Books]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - isbn
+ *               - title
+ *               - price
+ *               - publisher
+ *               - publishedDate
+ *               - authors
+ *               - edition
+ *               - format
+ *               - pages
+ *               - language
+ *             properties:
+ *               isbn:
+ *                 type: string
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *                 minimum: 0
+ *               publisher:
+ *                 type: string
+ *               publishedDate:
+ *                 type: string
+ *                 format: date
+ *               authors:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 minItems: 1
+ *               edition:
+ *                 type: string
+ *               format:
+ *                 type: string
+ *               pages:
+ *                 type: integer
+ *                 minimum: 1
+ *               language:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Book created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/Book'
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Validation error or ISBN already exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden - Admin access required
+ *       500:
+ *         description: Internal server error
+ */
 router.post(
   "/",
   authenticateToken,
@@ -218,6 +376,74 @@ router.post(
   }
 );
 
+/**
+ * @swagger
+ * /books/{id}:
+ *   put:
+ *     summary: Update a book
+ *     tags: [Books]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Book ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - price
+ *               - publisher
+ *               - publishedDate
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *                 minimum: 0
+ *               publisher:
+ *                 type: string
+ *               publishedDate:
+ *                 type: string
+ *                 format: date
+ *     responses:
+ *       200:
+ *         description: Book updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/Book'
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden - Admin access required
+ *       404:
+ *         description: Book not found
+ *       500:
+ *         description: Internal server error
+ */
 router.put(
   "/:id",
   authenticateToken,
@@ -276,6 +502,40 @@ router.put(
   }
 );
 
+/**
+ * @swagger
+ * /books/{id}:
+ *   delete:
+ *     summary: Delete a book (soft delete)
+ *     tags: [Books]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Book ID
+ *     responses:
+ *       200:
+ *         description: Book deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden - Admin access required
+ *       500:
+ *         description: Internal server error
+ */
 router.delete(
   "/:id",
   authenticateToken,
@@ -300,6 +560,44 @@ router.delete(
   }
 );
 
+/**
+ * @swagger
+ * /books/authors:
+ *   get:
+ *     summary: Get all authors with pagination and search
+ *     tags: [Books]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search term for author name
+ *     responses:
+ *       200:
+ *         description: List of authors
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PaginationResponse'
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
+ */
 router.get(
   "/authors",
   authenticateToken,
@@ -345,6 +643,54 @@ router.get(
   }
 );
 
+/**
+ * @swagger
+ * /books/authors:
+ *   post:
+ *     summary: Create a new author
+ *     tags: [Books]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *               biography:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Author created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/Author'
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden - Admin access required
+ *       500:
+ *         description: Internal server error
+ */
 router.post(
   "/authors",
   authenticateToken,
