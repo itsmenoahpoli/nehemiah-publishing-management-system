@@ -1,0 +1,321 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model UserAccounts {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  email     String   @unique
+  role      Role     @default(CLERK)
+  firstName String
+  lastName  String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user_accounts")
+}
+
+model SchoolProfile {
+  id          Int      @id @default(autoincrement())
+  schoolName  String
+  address     String
+  contactPerson String
+  phone       String
+  email       String
+  isApproved  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  schoolStock SchoolStock[]
+  schoolInventory SchoolInventory[]
+
+  @@map("school_profile")
+}
+
+model Books {
+  id          Int      @id @default(autoincrement())
+  isbn        String   @unique
+  title       String
+  description String?
+  price       Decimal  @db.Decimal(10, 2)
+  publisher   String
+  publishedDate DateTime
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  bookDetails BookDetail[]
+  bookAuthors BookAuthors[]
+  stocks      Stocks[]
+  warehouseStock WarehouseStock[]
+  schoolStock SchoolStock[]
+  schoolInventory SchoolInventory[]
+  billDetails BillDetails[]
+  returnedBookDetails ReturnedBookDetails[]
+  schoolSalesTransactionDetail SchoolSalesTransactionDetail[]
+
+  @@map("books")
+}
+
+model Author {
+  id        Int      @id @default(autoincrement())
+  name      String
+  biography  String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bookAuthors BookAuthors[]
+
+  @@map("author")
+}
+
+model BookAuthors {
+  id       Int @id @default(autoincrement())
+  bookId   Int
+  authorId Int
+
+  book   Books  @relation(fields: [bookId], references: [id])
+  author Author @relation(fields: [authorId], references: [id])
+
+  @@unique([bookId, authorId])
+  @@map("book_authors")
+}
+
+model BookDetail {
+  id          Int      @id @default(autoincrement())
+  bookId      Int
+  edition     String
+  format      String
+  pages       Int
+  language    String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  book Books @relation(fields: [bookId], references: [id])
+
+  @@map("book_detail")
+}
+
+model Stocks {
+  id        Int      @id @default(autoincrement())
+  bookId    Int
+  quantity  Int
+  location  String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  book Books @relation(fields: [bookId], references: [id])
+
+  @@map("stocks")
+}
+
+model WarehouseStock {
+  id        Int      @id @default(autoincrement())
+  bookId    Int
+  quantity  Int
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  book Books @relation(fields: [bookId], references: [id])
+
+  @@map("warehouse_stock")
+}
+
+model SchoolStock {
+  id        Int      @id @default(autoincrement())
+  schoolId  Int
+  bookId    Int
+  quantity  Int
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  school SchoolProfile @relation(fields: [schoolId], references: [id])
+  book   Books        @relation(fields: [bookId], references: [id])
+
+  @@unique([schoolId, bookId])
+  @@map("school_stock")
+}
+
+model SchoolInventory {
+  id        Int      @id @default(autoincrement())
+  schoolId  Int
+  bookId    Int
+  quantity  Int
+  status    InventoryStatus @default(PENDING)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  school SchoolProfile @relation(fields: [schoolId], references: [id])
+  book   Books        @relation(fields: [bookId], references: [id])
+
+  @@map("school_inventory")
+}
+
+model Customer {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  phone     String
+  address   String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bills Bill[]
+
+  @@map("customer")
+}
+
+model Bill {
+  id         Int      @id @default(autoincrement())
+  customerId Int
+  billNumber String   @unique
+  totalAmount Decimal @db.Decimal(10, 2)
+  status     BillStatus @default(PENDING)
+  paymentMethod PaymentMethod?
+  paidAmount Decimal? @db.Decimal(10, 2)
+  paidAt     DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  customer Customer @relation(fields: [customerId], references: [id])
+  billDetails BillDetails[]
+
+  @@map("bill")
+}
+
+model BillDetails {
+  id       Int      @id @default(autoincrement())
+  billId   Int
+  bookId   Int
+  quantity Int
+  unitPrice Decimal @db.Decimal(10, 2)
+  totalPrice Decimal @db.Decimal(10, 2)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bill Bill @relation(fields: [billId], references: [id])
+  book Books @relation(fields: [bookId], references: [id])
+
+  @@map("bill_details")
+}
+
+model SchoolSalesTransaction {
+  id        Int      @id @default(autoincrement())
+  schoolId  Int
+  transactionNumber String @unique
+  totalAmount Decimal @db.Decimal(10, 2)
+  status    TransactionStatus @default(PENDING)
+  paymentMethod PaymentMethod?
+  paidAmount Decimal? @db.Decimal(10, 2)
+  paidAt    DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  schoolSalesTransactionDetail SchoolSalesTransactionDetail[]
+
+  @@map("school_sales_transaction")
+}
+
+model SchoolSalesTransactionDetail {
+  id        Int      @id @default(autoincrement())
+  transactionId Int
+  bookId    Int
+  quantity  Int
+  unitPrice Decimal @db.Decimal(10, 2)
+  totalPrice Decimal @db.Decimal(10, 2)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transaction SchoolSalesTransaction @relation(fields: [transactionId], references: [id])
+  book        Books                 @relation(fields: [bookId], references: [id])
+
+  @@map("school_sales_transaction_detail")
+}
+
+model ReturnedBook {
+  id        Int      @id @default(autoincrement())
+  returnNumber String @unique
+  schoolId  Int
+  totalAmount Decimal @db.Decimal(10, 2)
+  status    ReturnStatus @default(PENDING)
+  approvedBy Int?
+  approvedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  returnedBookDetails ReturnedBookDetails[]
+
+  @@map("returned_book")
+}
+
+model ReturnedBookDetails {
+  id        Int      @id @default(autoincrement())
+  returnId  Int
+  bookId    Int
+  quantity  Int
+  unitPrice Decimal @db.Decimal(10, 2)
+  totalPrice Decimal @db.Decimal(10, 2)
+  reason    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  return ReturnedBook @relation(fields: [returnId], references: [id])
+  book   Books        @relation(fields: [bookId], references: [id])
+
+  @@map("returned_book_details")
+}
+
+enum Role {
+  ADMIN
+  CLERK
+}
+
+enum InventoryStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum BillStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+enum ReturnStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  BANK_TRANSFER
+}
