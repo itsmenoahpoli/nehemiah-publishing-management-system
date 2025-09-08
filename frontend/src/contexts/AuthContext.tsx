@@ -45,7 +45,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (token) {
         try {
           const response = await axios.get(
-            "http://localhost:5000/api/auth/me",
+            "http://localhost:7001/api/auth/me",
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -65,7 +65,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (username: string, password: string) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
+        "http://localhost:7001/api/auth/login",
         {
           username,
           password,
