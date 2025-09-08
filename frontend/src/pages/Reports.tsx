@@ -1,8 +1,86 @@
 import React from "react";
 import Layout from "../components/Layout";
 import { BarChart3, TrendingUp, Package, Users } from "lucide-react";
+import api from "../lib/api";
+import * as XLSX from "xlsx";
+
+const toYmd = (d: Date) => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+};
+
+const monthKey = (d: Date) => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  return `${y}_${m}`;
+};
 
 const Reports: React.FC = () => {
+  const handleDownloadMonthlySales = async () => {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), now.getMonth(), 1);
+    const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    const { data } = await api.get("/reports/sales", {
+      params: { startDate: toYmd(start), endDate: toYmd(end) },
+    });
+    const bills = data.data.bills || [];
+    const rows = bills.map((b: any) => ({
+      PaidAt: b.paidAt ? new Date(b.paidAt).toLocaleString() : "",
+      BillId: b.id,
+      Customer: b.customer?.customerName || "",
+      TotalAmount: b.totalAmount,
+      PaidAmount: b.paidAmount,
+      PaymentMethod: b.paymentMethod || "",
+    }));
+    const summary = [
+      {
+        TotalOrders: data.data.totalOrders || 0,
+        TotalRevenue: data.data.totalRevenue || 0,
+      },
+    ];
+    const wb = XLSX.utils.book_new();
+    const wsSummary = XLSX.utils.json_to_sheet(summary);
+    const wsSales = XLSX.utils.json_to_sheet(rows);
+    XLSX.utils.book_append_sheet(wb, wsSummary, "Summary");
+    XLSX.utils.book_append_sheet(wb, wsSales, "Sales");
+    XLSX.writeFile(wb, `Monthly_Sales_${monthKey(now)}.xlsx`);
+  };
+
+  const handleDownloadInventoryStatus = async () => {
+    const now = new Date();
+    const { data } = await api.get("/reports/inventory");
+    const warehouse = (data.data.warehouseStocks || []).map((s: any) => ({
+      BookId: s.bookId,
+      ISBN: s.book?.isbn || "",
+      Title: s.book?.title || "",
+      Quantity: s.quantity,
+    }));
+    const schools = (data.data.schoolStocks || []).map((s: any) => ({
+      SchoolId: s.schoolId,
+      School: s.school?.schoolName || "",
+      BookId: s.bookId,
+      ISBN: s.book?.isbn || "",
+      Title: s.book?.title || "",
+      Quantity: s.quantity,
+    }));
+    const summary = [
+      {
+        TotalWarehouseBooks: data.data.summary?.totalWarehouseBooks || 0,
+        TotalSchoolBooks: data.data.summary?.totalSchoolBooks || 0,
+        LowStockCount: data.data.summary?.lowStockCount || 0,
+      },
+    ];
+    const wb = XLSX.utils.book_new();
+    const wsSummary = XLSX.utils.json_to_sheet(summary);
+    const wsWarehouse = XLSX.utils.json_to_sheet(warehouse);
+    const wsSchools = XLSX.utils.json_to_sheet(schools);
+    XLSX.utils.book_append_sheet(wb, wsSummary, "Summary");
+    XLSX.utils.book_append_sheet(wb, wsWarehouse, "Warehouse");
+    XLSX.utils.book_append_sheet(wb, wsSchools, "Schools");
+    XLSX.writeFile(wb, `Inventory_Status_${monthKey(now)}.xlsx`);
+  };
   return (
     <Layout>
       <div className="space-y-6">
@@ -79,7 +157,12 @@ const Reports: React.FC = () => {
                   Generated on January 15, 2024
                 </p>
               </div>
-              <button className="btn-secondary">Download</button>
+              <button
+                className="btn-secondary"
+                onClick={handleDownloadMonthlySales}
+              >
+                Download
+              </button>
             </div>
             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
               <div>
@@ -90,7 +173,12 @@ const Reports: React.FC = () => {
                   Generated on January 14, 2024
                 </p>
               </div>
-              <button className="btn-secondary">Download</button>
+              <button
+                className="btn-secondary"
+                onClick={handleDownloadInventoryStatus}
+              >
+                Download
+              </button>
             </div>
           </div>
         </div>

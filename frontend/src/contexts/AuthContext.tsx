@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
-import axios from "axios";
+import api from "../lib/api";
 
 interface User {
   id: number;
@@ -44,12 +44,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const initializeAuth = async () => {
       if (token) {
         try {
-          const response = await axios.get(
-            "http://localhost:7001/api/auth/me",
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
+          const response = await api.get("/auth/me");
           setUser(response.data.data);
         } catch (error) {
           localStorage.removeItem("token");
@@ -64,14 +59,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (username: string, password: string) => {
     try {
-      const response = await axios.post(
-        "http://localhost:7001/api/auth/login",
-        {
-          username,
-          password,
-        }
-      );
-
+      const response = await api.post("/auth/login", {
+        username,
+        password,
+      });
       const { token: newToken, user: userData } = response.data.data;
       localStorage.setItem("token", newToken);
       setToken(newToken);

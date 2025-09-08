@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
+import api from "../lib/api";
 import {
   Package,
   Users,
@@ -31,10 +32,7 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:5000/api/reports/inventory"
-        );
-        const data = await response.json();
+        const { data } = await api.get("/reports/inventory");
         if (data.success) {
           setStats({
             totalBooks:

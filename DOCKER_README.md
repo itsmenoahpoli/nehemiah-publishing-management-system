@@ -85,6 +85,22 @@ docker-compose down -v
 docker-compose up --build -d
 ```
 
+### Use docker-compose.dev.yml (development)
+
+```bash
+# Start with the dev compose file
+docker-compose -f docker-compose.dev.yml up -d
+
+# Rebuild and start with the dev compose file
+docker-compose -f docker-compose.dev.yml up --build -d
+
+# View logs with the dev compose file
+docker-compose -f docker-compose.dev.yml logs -f
+
+# Stop and remove with the dev compose file
+docker-compose -f docker-compose.dev.yml down
+```
+
 ### Access database directly
 
 ```bash
