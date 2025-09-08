@@ -13,7 +13,7 @@ const OrderHistory: React.FC = () => {
 
         <div className="card">
           <div className="flex items-center mb-6">
-            <History className="h-6 w-6 text-primary-600 mr-2" />
+            <History className="h-6 w-6 text-blue-600 mr-2" />
             <h3 className="text-lg font-medium text-gray-900">All Orders</h3>
           </div>
 
@@ -61,7 +61,7 @@ const OrderHistory: React.FC = () => {
                     2024-01-15
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-primary-600 hover:text-primary-900">
+                    <button className="text-blue-600 hover:text-blue-900">
                       <Eye className="h-4 w-4" />
                     </button>
                   </td>
@@ -85,7 +85,7 @@ const OrderHistory: React.FC = () => {
                     2024-01-14
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-primary-600 hover:text-primary-900">
+                    <button className="text-blue-600 hover:text-blue-900">
                       <Eye className="h-4 w-4" />
                     </button>
                   </td>

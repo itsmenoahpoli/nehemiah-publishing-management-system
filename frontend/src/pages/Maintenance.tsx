@@ -14,7 +14,7 @@ const Maintenance: React.FC = () => {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           <div className="card">
             <div className="flex items-center">
-              <Users className="h-8 w-8 text-primary-600" />
+              <Users className="h-8 w-8 text-blue-600" />
               <div className="ml-4">
                 <h3 className="text-lg font-medium text-gray-900">
                   User Management
@@ -28,7 +28,7 @@ const Maintenance: React.FC = () => {
 
           <div className="card">
             <div className="flex items-center">
-              <Settings className="h-8 w-8 text-primary-600" />
+              <Settings className="h-8 w-8 text-blue-600" />
               <div className="ml-4">
                 <h3 className="text-lg font-medium text-gray-900">
                   System Settings

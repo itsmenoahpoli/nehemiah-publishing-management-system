@@ -14,7 +14,7 @@ const Inventory: React.FC = () => {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="card">
             <div className="flex items-center mb-4">
-              <Warehouse className="h-6 w-6 text-primary-600 mr-2" />
+              <Warehouse className="h-6 w-6 text-blue-600 mr-2" />
               <h3 className="text-lg font-medium text-gray-900">
                 Warehouse Stock
               </h3>
@@ -27,7 +27,7 @@ const Inventory: React.FC = () => {
 
           <div className="card">
             <div className="flex items-center mb-4">
-              <Package className="h-6 w-6 text-primary-600 mr-2" />
+              <Package className="h-6 w-6 text-blue-600 mr-2" />
               <h3 className="text-lg font-medium text-gray-900">
                 School Inventory
               </h3>

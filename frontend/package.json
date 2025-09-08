@@ -12,6 +12,7 @@
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
     "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/vite": "^4.1.11",
     "autoprefixer": "^10.4.21",
     "axios": "^1.11.0",
     "lucide-react": "^0.535.0",

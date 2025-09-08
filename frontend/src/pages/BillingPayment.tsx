@@ -16,7 +16,7 @@ const BillingPayment: React.FC = () => {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="card">
             <div className="flex items-center mb-4">
-              <CreditCard className="h-6 w-6 text-primary-600 mr-2" />
+              <CreditCard className="h-6 w-6 text-blue-600 mr-2" />
               <h3 className="text-lg font-medium text-gray-900">
                 Create New Bill
               </h3>
@@ -29,7 +29,7 @@ const BillingPayment: React.FC = () => {
 
           <div className="card">
             <div className="flex items-center mb-4">
-              <DollarSign className="h-6 w-6 text-primary-600 mr-2" />
+              <DollarSign className="h-6 w-6 text-blue-600 mr-2" />
               <h3 className="text-lg font-medium text-gray-900">
                 Process Payment
               </h3>
@@ -83,7 +83,7 @@ const BillingPayment: React.FC = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-primary-600 hover:text-primary-900">
+                    <button className="text-blue-600 hover:text-blue-900">
                       View
                     </button>
                   </td>

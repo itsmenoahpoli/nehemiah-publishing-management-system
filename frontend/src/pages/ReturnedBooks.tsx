@@ -13,7 +13,7 @@ const ReturnedBooks: React.FC = () => {
 
         <div className="card">
           <div className="flex items-center mb-6">
-            <RotateCcw className="h-6 w-6 text-primary-600 mr-2" />
+            <RotateCcw className="h-6 w-6 text-blue-600 mr-2" />
             <h3 className="text-lg font-medium text-gray-900">
               Pending Returns
             </h3>

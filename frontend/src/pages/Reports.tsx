@@ -14,7 +14,7 @@ const Reports: React.FC = () => {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           <div className="card">
             <div className="flex items-center">
-              <BarChart3 className="h-8 w-8 text-primary-600" />
+              <BarChart3 className="h-8 w-8 text-blue-600" />
               <div className="ml-4">
                 <h3 className="text-lg font-medium text-gray-900">
                   Sales Report
@@ -26,7 +26,7 @@ const Reports: React.FC = () => {
 
           <div className="card">
             <div className="flex items-center">
-              <Package className="h-8 w-8 text-primary-600" />
+              <Package className="h-8 w-8 text-blue-600" />
               <div className="ml-4">
                 <h3 className="text-lg font-medium text-gray-900">
                   Inventory Report
@@ -38,7 +38,7 @@ const Reports: React.FC = () => {
 
           <div className="card">
             <div className="flex items-center">
-              <TrendingUp className="h-8 w-8 text-primary-600" />
+              <TrendingUp className="h-8 w-8 text-blue-600" />
               <div className="ml-4">
                 <h3 className="text-lg font-medium text-gray-900">
                   Transaction Report
@@ -52,7 +52,7 @@ const Reports: React.FC = () => {
 
           <div className="card">
             <div className="flex items-center">
-              <Users className="h-8 w-8 text-primary-600" />
+              <Users className="h-8 w-8 text-blue-600" />
               <div className="ml-4">
                 <h3 className="text-lg font-medium text-gray-900">
                   School Report

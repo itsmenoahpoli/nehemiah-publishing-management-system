@@ -65,7 +65,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <h1 className="text-xl font-bold text-primary-600">
+                <h1 className="text-xl font-bold text-blue-600">
                   Nehemiah Publishing
                 </h1>
               </div>
@@ -112,7 +112,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <span className="text-sm font-medium text-gray-700">
                     {user?.firstName} {user?.lastName}
                   </span>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                     {user?.role}
                   </span>
                 </div>

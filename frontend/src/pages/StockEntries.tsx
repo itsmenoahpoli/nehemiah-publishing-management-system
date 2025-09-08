@@ -1,6 +1,6 @@
 import React from "react";
 import Layout from "../components/Layout";
-import { Plus, Package } from "lucide-react";
+import { Plus } from "lucide-react";
 
 const StockEntries: React.FC = () => {
   return (
@@ -14,7 +14,7 @@ const StockEntries: React.FC = () => {
         <div className="card">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center">
-              <Plus className="h-6 w-6 text-primary-600 mr-2" />
+              <Plus className="h-6 w-6 text-blue-600 mr-2" />
               <h3 className="text-lg font-medium text-gray-900">
                 Add New Stock Entry
               </h3>
@@ -58,7 +58,7 @@ const StockEntries: React.FC = () => {
                     2024-01-15
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-primary-600 hover:text-primary-900">
+                    <button className="text-blue-600 hover:text-blue-900">
                       Edit
                     </button>
                   </td>
