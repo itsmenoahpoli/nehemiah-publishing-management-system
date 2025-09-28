@@ -6,6 +6,46 @@ import { authenticateToken, requireAdmin } from "../middlewares/auth";
 const router = Router();
 const prisma = new PrismaClient();
 
+/**
+ * @swagger
+ * /stock-entries:
+ *   get:
+ *     summary: Get all stock entries with pagination and search
+ *     tags: [Stock Entries]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search term for book title or ISBN
+ *     responses:
+ *       200:
+ *         description: List of stock entries
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PaginationResponse'
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden - Admin access required
+ *       500:
+ *         description: Internal server error
+ */
 router.get(
   "/",
   authenticateToken,
@@ -68,6 +108,65 @@ router.get(
   }
 );
 
+/**
+ * @swagger
+ * /stock-entries:
+ *   post:
+ *     summary: Create a new stock entry
+ *     tags: [Stock Entries]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - bookId
+ *               - quantity
+ *               - location
+ *             properties:
+ *               bookId:
+ *                 type: integer
+ *                 minimum: 1
+ *                 description: ID of the book
+ *               quantity:
+ *                 type: integer
+ *                 minimum: 1
+ *                 description: Number of books to add to stock
+ *               location:
+ *                 type: string
+ *                 description: Location where the stock is stored
+ *     responses:
+ *       201:
+ *         description: Stock entry created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/Stock'
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden - Admin access required
+ *       404:
+ *         description: Book not found
+ *       500:
+ *         description: Internal server error
+ */
 router.post(
   "/",
   authenticateToken,
@@ -150,6 +249,65 @@ router.post(
   }
 );
 
+/**
+ * @swagger
+ * /stock-entries/{id}:
+ *   put:
+ *     summary: Update a stock entry
+ *     tags: [Stock Entries]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Stock entry ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - quantity
+ *               - location
+ *             properties:
+ *               quantity:
+ *                 type: integer
+ *                 minimum: 1
+ *                 description: Updated quantity
+ *               location:
+ *                 type: string
+ *                 description: Updated location
+ *     responses:
+ *       200:
+ *         description: Stock entry updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/Stock'
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden - Admin access required
+ *       500:
+ *         description: Internal server error
+ */
 router.put(
   "/:id",
   authenticateToken,
@@ -204,6 +362,40 @@ router.put(
   }
 );
 
+/**
+ * @swagger
+ * /stock-entries/{id}:
+ *   delete:
+ *     summary: Delete a stock entry (soft delete)
+ *     tags: [Stock Entries]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Stock entry ID
+ *     responses:
+ *       200:
+ *         description: Stock entry deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden - Admin access required
+ *       500:
+ *         description: Internal server error
+ */
 router.delete(
   "/:id",
   authenticateToken,

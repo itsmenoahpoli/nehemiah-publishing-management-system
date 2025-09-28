@@ -6,6 +6,45 @@ const client_1 = require("@prisma/client");
 const auth_1 = require("../middlewares/auth");
 const router = (0, express_1.Router)();
 const prisma = new client_1.PrismaClient();
+/**
+ * @swagger
+ * /book-requests:
+ *   get:
+ *     summary: Get all book requests with pagination and status filter
+ *     tags: [Book Requests]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [PENDING, APPROVED, REJECTED]
+ *         description: Filter by request status
+ *     responses:
+ *       200:
+ *         description: List of book requests
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PaginationResponse'
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
+ */
 router.get("/", auth_1.authenticateToken, auth_1.requireAnyRole, async (req, res) => {
     try {
         const { page = 1, limit = 10, status = "" } = req.query;
@@ -51,6 +90,78 @@ router.get("/", auth_1.authenticateToken, auth_1.requireAnyRole, async (req, res
         res.status(500).json({ message: "Internal server error" });
     }
 });
+/**
+ * @swagger
+ * /book-requests:
+ *   post:
+ *     summary: Create a new book request
+ *     tags: [Book Requests]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - schoolId
+ *               - bookId
+ *               - quantity
+ *             properties:
+ *               schoolId:
+ *                 type: integer
+ *                 minimum: 1
+ *                 description: ID of the school making the request
+ *               bookId:
+ *                 type: integer
+ *                 minimum: 1
+ *                 description: ID of the book being requested
+ *               quantity:
+ *                 type: integer
+ *                 minimum: 1
+ *                 description: Number of books requested
+ *     responses:
+ *       201:
+ *         description: Book request created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     schoolId:
+ *                       type: integer
+ *                     bookId:
+ *                       type: integer
+ *                     quantity:
+ *                       type: integer
+ *                     status:
+ *                       type: string
+ *                       enum: [PENDING, APPROVED, REJECTED]
+ *                     school:
+ *                       $ref: '#/components/schemas/SchoolProfile'
+ *                     book:
+ *                       $ref: '#/components/schemas/Book'
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Validation error or request already exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
+ */
 router.post("/", auth_1.authenticateToken, auth_1.requireAnyRole, [
     (0, express_validator_1.body)("schoolId")
         .isInt({ min: 1 })
@@ -112,6 +223,46 @@ router.post("/", auth_1.authenticateToken, auth_1.requireAnyRole, [
         res.status(500).json({ message: "Internal server error" });
     }
 });
+/**
+ * @swagger
+ * /book-requests/{id}/approve:
+ *   put:
+ *     summary: Approve a book request
+ *     tags: [Book Requests]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Book request ID
+ *     responses:
+ *       200:
+ *         description: Book request approved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Request is not pending or insufficient stock
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Request not found
+ *       500:
+ *         description: Internal server error
+ */
 router.put("/:id/approve", auth_1.authenticateToken, auth_1.requireAnyRole, async (req, res) => {
     try {
         const { id } = req.params;
@@ -174,6 +325,46 @@ router.put("/:id/approve", auth_1.authenticateToken, auth_1.requireAnyRole, asyn
         res.status(500).json({ message: "Internal server error" });
     }
 });
+/**
+ * @swagger
+ * /book-requests/{id}/reject:
+ *   put:
+ *     summary: Reject a book request
+ *     tags: [Book Requests]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Book request ID
+ *     responses:
+ *       200:
+ *         description: Book request rejected successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Request is not pending
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Request not found
+ *       500:
+ *         description: Internal server error
+ */
 router.put("/:id/reject", auth_1.authenticateToken, auth_1.requireAnyRole, async (req, res) => {
     try {
         const { id } = req.params;

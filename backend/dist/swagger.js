@@ -144,6 +144,53 @@ const options = {
                         },
                         approvedBy: { type: "integer" },
                         approvedAt: { type: "string", format: "date-time" },
+                        createdAt: { type: "string", format: "date-time" },
+                        updatedAt: { type: "string", format: "date-time" },
+                        returnedBookDetails: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    id: { type: "integer" },
+                                    bookId: { type: "integer" },
+                                    quantity: { type: "integer" },
+                                    unitPrice: { type: "number" },
+                                    totalPrice: { type: "number" },
+                                    reason: { type: "string" },
+                                    book: { $ref: "#/components/schemas/Book" },
+                                },
+                            },
+                        },
+                    },
+                },
+                BookRequest: {
+                    type: "object",
+                    properties: {
+                        id: { type: "integer" },
+                        schoolId: { type: "integer" },
+                        bookId: { type: "integer" },
+                        quantity: { type: "integer" },
+                        status: {
+                            type: "string",
+                            enum: ["PENDING", "APPROVED", "REJECTED"],
+                        },
+                        createdAt: { type: "string", format: "date-time" },
+                        updatedAt: { type: "string", format: "date-time" },
+                        school: { $ref: "#/components/schemas/SchoolProfile" },
+                        book: { $ref: "#/components/schemas/Book" },
+                    },
+                },
+                StockEntry: {
+                    type: "object",
+                    properties: {
+                        id: { type: "integer" },
+                        bookId: { type: "integer" },
+                        quantity: { type: "integer" },
+                        location: { type: "string" },
+                        isActive: { type: "boolean" },
+                        createdAt: { type: "string", format: "date-time" },
+                        updatedAt: { type: "string", format: "date-time" },
+                        book: { $ref: "#/components/schemas/Book" },
                     },
                 },
                 LoginRequest: {
@@ -197,6 +244,134 @@ const options = {
                     properties: {
                         message: { type: "string" },
                         errors: { type: "array" },
+                    },
+                },
+                DashboardOverview: {
+                    type: "object",
+                    properties: {
+                        overview: {
+                            type: "object",
+                            properties: {
+                                totalBooks: { type: "integer" },
+                                totalSchools: { type: "integer" },
+                                totalCustomers: { type: "integer" },
+                                totalUsers: { type: "integer" },
+                                pendingRegistrations: { type: "integer" },
+                                totalRevenue: { type: "number" },
+                                totalSchoolRevenue: { type: "number" },
+                                totalWarehouseStock: { type: "integer" },
+                                totalSchoolStock: { type: "integer" },
+                            },
+                        },
+                        statusCounts: {
+                            type: "object",
+                            properties: {
+                                bills: {
+                                    type: "object",
+                                    properties: {
+                                        total: { type: "integer" },
+                                        pending: { type: "integer" },
+                                        paid: { type: "integer" },
+                                        cancelled: { type: "integer" },
+                                    },
+                                },
+                                transactions: {
+                                    type: "object",
+                                    properties: {
+                                        total: { type: "integer" },
+                                        pending: { type: "integer" },
+                                        completed: { type: "integer" },
+                                        cancelled: { type: "integer" },
+                                    },
+                                },
+                                returns: {
+                                    type: "object",
+                                    properties: {
+                                        total: { type: "integer" },
+                                        pending: { type: "integer" },
+                                        approved: { type: "integer" },
+                                        rejected: { type: "integer" },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                ChartData: {
+                    type: "object",
+                    properties: {
+                        date: { type: "string", format: "date-time" },
+                        amount: { type: "number" },
+                        count: { type: "integer" },
+                    },
+                },
+                TopSellingBook: {
+                    type: "object",
+                    properties: {
+                        bookId: { type: "integer" },
+                        title: { type: "string" },
+                        totalSold: { type: "integer" },
+                        orderCount: { type: "integer" },
+                        revenue: { type: "number" },
+                    },
+                },
+                RecentActivity: {
+                    type: "object",
+                    properties: {
+                        recentBills: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    id: { type: "integer" },
+                                    billNumber: { type: "string" },
+                                    customerName: { type: "string" },
+                                    totalAmount: { type: "number" },
+                                    status: { type: "string" },
+                                    createdAt: { type: "string", format: "date-time" },
+                                },
+                            },
+                        },
+                        recentTransactions: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    id: { type: "integer" },
+                                    transactionNumber: { type: "string" },
+                                    totalAmount: { type: "number" },
+                                    status: { type: "string" },
+                                    bookCount: { type: "integer" },
+                                    createdAt: { type: "string", format: "date-time" },
+                                },
+                            },
+                        },
+                        recentReturns: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    id: { type: "integer" },
+                                    returnNumber: { type: "string" },
+                                    totalAmount: { type: "number" },
+                                    status: { type: "string" },
+                                    bookCount: { type: "integer" },
+                                    createdAt: { type: "string", format: "date-time" },
+                                },
+                            },
+                        },
+                        recentRegistrations: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    id: { type: "integer" },
+                                    schoolName: { type: "string" },
+                                    isApproved: { type: "boolean" },
+                                    createdAt: { type: "string", format: "date-time" },
+                                },
+                            },
+                        },
                     },
                 },
             },

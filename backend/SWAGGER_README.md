@@ -26,13 +26,13 @@ Authorization: Bearer <your-jwt-token>
 
 ### Authentication (`/auth`)
 
-| Method | Endpoint                | Description           | Auth Required |
-| ------ | ----------------------- | --------------------- | ------------- |
-| POST   | `/auth/login`           | User login            | No            |
-| POST   | `/auth/change-password` | Change user password  | Yes           |
-| GET    | `/auth/me`              | Get current user info | Yes           |
+| Method | Endpoint                | Description           | Auth Required | Role Required |
+| ------ | ----------------------- | --------------------- | ------------- | ------------- |
+| POST   | `/auth/login`           | User login            | No            | None          |
+| POST   | `/auth/change-password` | Change user password  | Yes           | Any           |
+| GET    | `/auth/me`              | Get current user info | Yes           | Any           |
 
-### Books (`/books`)
+### Books Management (`/books`)
 
 | Method | Endpoint         | Description                   | Auth Required | Role Required |
 | ------ | ---------------- | ----------------------------- | ------------- | ------------- |
@@ -43,27 +43,78 @@ Authorization: Bearer <your-jwt-token>
 | DELETE | `/books/:id`     | Delete book (soft delete)     | Yes           | Admin         |
 | GET    | `/books/authors` | Get all authors               | Yes           | Any           |
 | POST   | `/books/authors` | Create new author             | Yes           | Admin         |
+| PUT    | `/books/authors/:id` | Update author             | Yes           | Admin         |
+| DELETE | `/books/authors/:id` | Delete author             | Yes           | Admin         |
 
-### Users (`/users`)
+### User Management (`/users`)
 
 | Method | Endpoint | Description     | Auth Required | Role Required |
 | ------ | -------- | --------------- | ------------- | ------------- |
 | GET    | `/users` | Get all users   | Yes           | Admin         |
+| GET    | `/users/:id` | Get specific user | Yes       | Admin         |
 | POST   | `/users` | Create new user | Yes           | Admin         |
+| PUT    | `/users/:id` | Update user | Yes           | Admin         |
+| DELETE | `/users/:id` | Delete user | Yes           | Admin         |
 
-### Inventory (`/inventory`)
+### Inventory Management (`/inventory`)
 
 | Method | Endpoint               | Description             | Auth Required | Role Required |
 | ------ | ---------------------- | ----------------------- | ------------- | ------------- |
 | GET    | `/inventory/warehouse` | Get warehouse inventory | Yes           | Any           |
 | GET    | `/inventory/schools`   | Get school inventory    | Yes           | Any           |
 
-### Billing (`/billing`)
+### Billing & Payment (`/billing`)
 
 | Method | Endpoint   | Description     | Auth Required | Role Required |
 | ------ | ---------- | --------------- | ------------- | ------------- |
 | GET    | `/billing` | Get all bills   | Yes           | Any           |
+| GET    | `/billing/:id` | Get specific bill | Yes       | Any           |
 | POST   | `/billing` | Create new bill | Yes           | Any           |
+| PUT    | `/billing/:id` | Update bill | Yes           | Any           |
+| PUT    | `/billing/:id/pay` | Process payment | Yes       | Any           |
+| DELETE | `/billing/:id` | Delete bill | Yes           | Any           |
+
+### Stock Entries (`/stock-entries`)
+
+| Method | Endpoint         | Description        | Auth Required | Role Required |
+| ------ | ---------------- | ------------------ | ------------- | ------------- |
+| GET    | `/stock-entries` | Get stock entries  | Yes           | Admin         |
+| GET    | `/stock-entries/:id` | Get specific entry | Yes       | Admin         |
+| POST   | `/stock-entries` | Create stock entry | Yes           | Admin         |
+| PUT    | `/stock-entries/:id` | Update stock entry | Yes       | Admin         |
+| DELETE | `/stock-entries/:id` | Delete stock entry | Yes       | Admin         |
+
+### Book Requests (`/book-requests`)
+
+| Method | Endpoint         | Description         | Auth Required | Role Required |
+| ------ | ---------------- | ------------------- | ------------- | ------------- |
+| GET    | `/book-requests` | Get book requests   | Yes           | Any           |
+| GET    | `/book-requests/:id` | Get specific request | Yes       | Any           |
+| POST   | `/book-requests` | Create book request | Yes           | Any           |
+| PUT    | `/book-requests/:id/approve` | Approve request | Yes | Any           |
+| PUT    | `/book-requests/:id/reject` | Reject request | Yes   | Any           |
+
+### Returns Management (`/returns`)
+
+| Method | Endpoint   | Description          | Auth Required | Role Required |
+| ------ | ---------- | -------------------- | ------------- | ------------- |
+| GET    | `/returns` | Get returned books   | Yes           | Any           |
+| GET    | `/returns/:id` | Get specific return | Yes       | Any           |
+| POST   | `/returns` | Create return record | Yes           | Any           |
+| PUT    | `/returns/:id/approve` | Approve return | Yes       | Any           |
+| PUT    | `/returns/:id/reject` | Reject return | Yes         | Any           |
+| PUT    | `/returns/:id` | Update return | Yes           | Any           |
+| DELETE | `/returns/:id` | Delete return | Yes           | Any           |
+
+### School Registrations (`/registrations`)
+
+| Method | Endpoint         | Description                | Auth Required | Role Required |
+| ------ | ---------------- | -------------------------- | ------------- | ------------- |
+| GET    | `/registrations` | Get school registrations   | Yes           | Admin         |
+| GET    | `/registrations/:id` | Get specific registration | Yes       | Admin         |
+| POST   | `/registrations` | Submit school registration | No            | None          |
+| PUT    | `/registrations/:id/approve` | Approve registration | Yes | Admin         |
+| PUT    | `/registrations/:id/reject` | Reject registration | Yes   | Admin         |
 
 ### Reports (`/reports`)
 
@@ -71,34 +122,8 @@ Authorization: Bearer <your-jwt-token>
 | ------ | -------------------- | -------------------- | ------------- | ------------- |
 | GET    | `/reports/sales`     | Get sales report     | Yes           | Any           |
 | GET    | `/reports/inventory` | Get inventory report | Yes           | Any           |
-
-### Registrations (`/registrations`)
-
-| Method | Endpoint         | Description                | Auth Required | Role Required |
-| ------ | ---------------- | -------------------------- | ------------- | ------------- |
-| GET    | `/registrations` | Get school registrations   | Yes           | Admin         |
-| POST   | `/registrations` | Submit school registration | No            | None          |
-
-### Stock Entries (`/stock-entries`)
-
-| Method | Endpoint         | Description        | Auth Required | Role Required |
-| ------ | ---------------- | ------------------ | ------------- | ------------- |
-| GET    | `/stock-entries` | Get stock entries  | Yes           | Any           |
-| POST   | `/stock-entries` | Create stock entry | Yes           | Admin         |
-
-### Book Requests (`/book-requests`)
-
-| Method | Endpoint         | Description         | Auth Required | Role Required |
-| ------ | ---------------- | ------------------- | ------------- | ------------- |
-| GET    | `/book-requests` | Get book requests   | Yes           | Any           |
-| POST   | `/book-requests` | Create book request | Yes           | Any           |
-
-### Returns (`/returns`)
-
-| Method | Endpoint   | Description          | Auth Required | Role Required |
-| ------ | ---------- | -------------------- | ------------- | ------------- |
-| GET    | `/returns` | Get returned books   | Yes           | Any           |
-| POST   | `/returns` | Create return record | Yes           | Any           |
+| GET    | `/reports/transactions` | Get transaction report | Yes       | Any           |
+| GET    | `/reports/schools`   | Get school report    | Yes           | Any           |
 
 ## Data Models
 
@@ -135,6 +160,19 @@ Authorization: Bearer <your-jwt-token>
 }
 ```
 
+### Author
+
+```json
+{
+  "id": 1,
+  "name": "John Author",
+  "biography": "Author biography",
+  "isActive": true,
+  "createdAt": "2024-01-01T00:00:00Z",
+  "updatedAt": "2024-01-01T00:00:00Z"
+}
+```
+
 ### Bill
 
 ```json
@@ -148,8 +186,151 @@ Authorization: Bearer <your-jwt-token>
   "paidAmount": 59.98,
   "paidAt": "2024-01-01T00:00:00Z",
   "createdAt": "2024-01-01T00:00:00Z",
+  "updatedAt": "2024-01-01T00:00:00Z",
+  "customer": {
+    "id": 1,
+    "name": "Customer Name",
+    "email": "customer@example.com",
+    "phone": "+1234567890"
+  },
+  "billDetails": [
+    {
+      "id": 1,
+      "bookId": 1,
+      "quantity": 2,
+      "unitPrice": 29.99,
+      "totalPrice": 59.98,
+      "book": {
+        "id": 1,
+        "title": "Sample Book",
+        "isbn": "978-0-123456-47-2"
+      }
+    }
+  ]
+}
+```
+
+### Book Request
+
+```json
+{
+  "id": 1,
+  "schoolId": 1,
+  "bookId": 1,
+  "quantity": 10,
+  "status": "PENDING",
+  "createdAt": "2024-01-01T00:00:00Z",
+  "updatedAt": "2024-01-01T00:00:00Z",
+  "school": {
+    "id": 1,
+    "schoolName": "Sample School",
+    "email": "school@example.com",
+    "phone": "+1234567890"
+  },
+  "book": {
+    "id": 1,
+    "title": "Sample Book",
+    "isbn": "978-0-123456-47-2",
+    "price": 29.99
+  }
+}
+```
+
+### Returned Book
+
+```json
+{
+  "id": 1,
+  "returnNumber": "RET-1704067200000",
+  "schoolId": 1,
+  "totalAmount": 299.90,
+  "status": "PENDING",
+  "approvedBy": null,
+  "approvedAt": null,
+  "createdAt": "2024-01-01T00:00:00Z",
+  "updatedAt": "2024-01-01T00:00:00Z",
+  "returnedBookDetails": [
+    {
+      "id": 1,
+      "bookId": 1,
+      "quantity": 10,
+      "unitPrice": 29.99,
+      "totalPrice": 299.90,
+      "reason": "Damaged books",
+      "book": {
+        "id": 1,
+        "title": "Sample Book",
+        "isbn": "978-0-123456-47-2"
+      }
+    }
+  ]
+}
+```
+
+### School Registration
+
+```json
+{
+  "id": 1,
+  "schoolName": "Sample School",
+  "address": "123 School Street, City, State",
+  "contactPerson": "John Principal",
+  "phone": "+1234567890",
+  "email": "principal@school.com",
+  "isApproved": false,
+  "createdAt": "2024-01-01T00:00:00Z",
   "updatedAt": "2024-01-01T00:00:00Z"
 }
+```
+
+### Stock Entry
+
+```json
+{
+  "id": 1,
+  "bookId": 1,
+  "quantity": 100,
+  "location": "Warehouse A",
+  "isActive": true,
+  "createdAt": "2024-01-01T00:00:00Z",
+  "updatedAt": "2024-01-01T00:00:00Z",
+  "book": {
+    "id": 1,
+    "title": "Sample Book",
+    "isbn": "978-0-123456-47-2"
+  }
+}
+```
+
+## Query Parameters
+
+### Pagination
+
+All list endpoints support pagination:
+
+- `page`: Page number (default: 1)
+- `limit`: Items per page (default: 10)
+
+### Filtering
+
+Many endpoints support filtering:
+
+- `search`: Search term for text fields
+- `status`: Filter by status (PENDING, APPROVED, REJECTED, PAID, etc.)
+- `startDate`: Start date for date range filters
+- `endDate`: End date for date range filters
+
+### Example Requests
+
+```bash
+# Get books with pagination and search
+GET /api/books?page=1&limit=20&search=science
+
+# Get pending book requests
+GET /api/book-requests?status=PENDING
+
+# Get sales report for date range
+GET /api/reports/sales?startDate=2024-01-01&endDate=2024-01-31
 ```
 
 ## Common Response Format
@@ -280,6 +461,28 @@ curl -X GET http://localhost:5000/api/books \
 3. Use the login endpoint to get a token
 4. Set the Authorization header for subsequent requests
 
+## Business Logic
+
+### Book Request Workflow
+
+1. **Create Request**: School submits book request
+2. **Review**: Admin reviews the request
+3. **Approve/Reject**: Admin approves or rejects the request
+4. **Stock Update**: Approved requests update warehouse and school stock
+
+### Return Workflow
+
+1. **Create Return**: School submits return request
+2. **Review**: Admin reviews the return
+3. **Approve/Reject**: Admin approves or rejects the return
+4. **Stock Update**: Approved returns update stock levels
+
+### Billing Workflow
+
+1. **Create Bill**: Create bill with items
+2. **Process Payment**: Process payment for the bill
+3. **Update Status**: Bill status updated to PAID
+
 ## Error Handling
 
 The API returns consistent error responses with appropriate HTTP status codes. Common error scenarios:
@@ -301,7 +504,22 @@ Currently, the API does not implement rate limiting. Consider implementing rate 
 - JWT tokens expire after 24 hours
 - Input validation is implemented using express-validator
 - SQL injection is prevented through Prisma ORM
+- Role-based access control implemented
+
+## API Versioning
+
+The current API is version 1.0. Future versions will be available at `/api/v2/`, etc.
 
 ## Support
 
 For API support or questions, please contact the development team or refer to the Swagger documentation at `http://localhost:5000/api-docs`.
+
+## Changelog
+
+### Version 1.0.0
+- Initial API release
+- Complete CRUD operations for all modules
+- JWT authentication
+- Swagger documentation
+- Role-based access control
+- Comprehensive error handling

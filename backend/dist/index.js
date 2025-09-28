@@ -19,6 +19,7 @@ const billing_1 = __importDefault(require("./routes/billing"));
 const returns_1 = __importDefault(require("./routes/returns"));
 const reports_1 = __importDefault(require("./routes/reports"));
 const registrations_1 = __importDefault(require("./routes/registrations"));
+const dashboard_1 = __importDefault(require("./routes/dashboard"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const prisma = new client_1.PrismaClient();
@@ -37,6 +38,7 @@ app.use("/api/billing", billing_1.default);
 app.use("/api/returns", returns_1.default);
 app.use("/api/reports", reports_1.default);
 app.use("/api/registrations", registrations_1.default);
+app.use("/api/dashboard", dashboard_1.default);
 app.get("/api/health", (req, res) => {
     res.json({ status: "OK", message: "Nehemiah Publishing API is running" });
 });
