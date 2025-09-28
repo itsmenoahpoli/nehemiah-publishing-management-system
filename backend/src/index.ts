@@ -16,6 +16,7 @@ import returnRoutes from "./routes/returns";
 import reportRoutes from "./routes/reports";
 import registrationRoutes from "./routes/registrations";
 import dashboardRoutes from "./routes/dashboard";
+import schoolRoutes from "./routes/schools";
 
 dotenv.config();
 
@@ -40,6 +41,7 @@ app.use("/api/returns", returnRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/registrations", registrationRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/schools", schoolRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK", message: "Nehemiah Publishing API is running" });
