@@ -5,8 +5,7 @@ import DataTable from "../components/DataTable";
 import Modal from "../components/Modal";
 import FormField from "../components/FormField";
 import { useToast } from "../contexts/ToastContext";
-import { bookRequestsApi } from "../lib/apiService";
-import api from "../lib/api";
+import { bookRequestsApi, booksApi, schoolsApi } from "../lib/apiService";
 
 interface BookRequest {
   id: number;
@@ -79,11 +78,11 @@ const BookRequests: React.FC = () => {
   const loadSchoolsAndBooks = async () => {
     try {
       const [schoolsRes, booksRes] = await Promise.all([
-        api.get("/registrations", { params: { page: 1, limit: 100, status: 'approved' } }),
-        api.get("/books", { params: { page: 1, limit: 100 } })
+        schoolsApi.getAll({ limit: 100, status: 'approved' }),
+        booksApi.getAll({ limit: 100 })
       ]);
-      setSchools(schoolsRes.data.data || []);
-      setBooks(booksRes.data.data || []);
+      setSchools(schoolsRes.data || []);
+      setBooks(booksRes.data || []);
     } catch (error: any) {
       showError('Failed to load schools and books data');
     }
