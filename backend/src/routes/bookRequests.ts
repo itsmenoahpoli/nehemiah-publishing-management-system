@@ -54,9 +54,15 @@ router.get(
       const { page = 1, limit = 10, status = "" } = req.query;
       const skip = (Number(page) - 1) * Number(limit);
 
+      const rawStatus = (status as string).toUpperCase();
+      const validStatuses = ["PENDING", "APPROVED", "REJECTED"] as const;
+      const statusFilter = validStatuses.includes(rawStatus as any)
+        ? (rawStatus as typeof validStatuses[number])
+        : undefined;
+
       const where = {
         isActive: true,
-        ...(status ? { status: status as any } : {}),
+        ...(statusFilter ? { status: statusFilter } : {}),
       };
 
       const [inventories, total] = await Promise.all([

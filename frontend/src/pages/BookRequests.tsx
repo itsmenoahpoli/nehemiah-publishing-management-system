@@ -323,16 +323,7 @@ const BookRequests: React.FC = () => {
             >
               Pending
             </button>
-            <button
-              onClick={() => handleStatusFilter('HOLD')}
-              className={`px-3 py-1 rounded-md text-sm ${
-                statusFilter === 'HOLD'
-                  ? 'bg-blue-100 text-blue-800'
-                  : 'bg-gray-100 text-gray-800'
-              }`}
-            >
-              On Hold
-            </button>
+            
             <button
               onClick={() => handleStatusFilter('APPROVED')}
               className={`px-3 py-1 rounded-md text-sm ${

@@ -1,5 +1,25 @@
 @import "tailwindcss";
 
+@theme {
+  --color-brand-50: #e6f6ff;
+  --color-brand-100: #ccefff;
+  --color-brand-200: #99dfff;
+  --color-brand-300: #66cfff;
+  --color-brand-400: #33bfff;
+  --color-brand-500: #04a9f5;
+  --color-brand-600: #0392d3;
+  --color-brand-700: #027bb1;
+  --color-brand-800: #01648f;
+  --color-brand-900: #014e70;
+
+  --color-sidebar-700: #2f3d44;
+  --color-sidebar-800: #263238;
+  --color-sidebar-900: #1e272c;
+
+  --color-success-500: #1de9b6;
+  --color-success-600: #12c9a0;
+}
+
 @layer base {
   html {
     font-family: "Inter", system-ui, sans-serif;
@@ -8,7 +28,7 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+    @apply bg-[#0392d3] hover:bg-[#027bb1] text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
   }
 
   .btn-secondary {
@@ -20,7 +40,7 @@
   }
 
   .input-field {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#04a9f5] focus:border-transparent;
   }
 
   .card {
@@ -28,10 +48,10 @@
   }
 
   .sidebar-link {
-    @apply flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-blue-600 rounded-lg transition-colors duration-200;
+    @apply flex items-center px-4 py-2 text-gray-200 hover:bg-[#2f3d44] hover:text-white rounded-lg transition-colors duration-200;
   }
 
   .sidebar-link.active {
-    @apply bg-blue-100 text-blue-600;
+    @apply bg-[#2f3d44] text-white;
   }
 }

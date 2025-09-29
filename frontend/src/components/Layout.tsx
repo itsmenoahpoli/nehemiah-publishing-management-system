@@ -64,25 +64,25 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="flex h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-100">
+      <div className="flex h-screen bg-gray-100">
         <div
-          className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out scale-90 origin-top-left ${
+          className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#263238] text-white shadow-lg transform transition-transform duration-300 ease-in-out scale-90 origin-top-left ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           } lg:translate-x-0 lg:static lg:inset-0`}
           style={{ height: '111.11%' }}
         >
-          <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
+          <div className="flex items-center justify-between h-16 px-4 border-b border-[#2f3d44]">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <h1 className="text-xl font-bold text-blue-600">
+                <h1 className="text-xl font-bold text-[#33bfff]">
                   Nehemiah Publishing
                 </h1>
               </div>
             </div>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
+              className="lg:hidden p-2 rounded-md text-gray-300 hover:text-white hover:bg-sidebar-700"
             >
               <X className="h-6 w-6" />
             </button>
@@ -122,7 +122,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <span className="text-sm font-medium text-gray-700">
                     {user?.firstName} {user?.lastName}
                   </span>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-brand-100 text-brand-800">
                     {user?.role}
                   </span>
                 </div>

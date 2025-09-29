@@ -7,9 +7,10 @@ interface ModalProps {
   title: string;
   children: React.ReactNode;
   size?: 'sm' | 'md' | 'lg' | 'xl';
+  footer?: React.ReactNode;
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, size = 'md' }) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, size = 'md', footer }) => {
   if (!isOpen) return null;
 
   const sizeClasses = {
@@ -33,7 +34,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, size = 
               <X className="h-6 w-6" />
             </button>
           </div>
-          <div className="p-6">{children}</div>
+          <div className="p-6 max-h-[70vh] overflow-auto">{children}</div>
+          {footer && (
+            <div className="p-4 border-t bg-white sticky bottom-0">{footer}</div>
+          )}
         </div>
       </div>
     </div>

@@ -5,7 +5,7 @@ import DataTable from "../components/DataTable";
 import Modal from "../components/Modal";
 import FormField from "../components/FormField";
 import { useToast } from "../contexts/ToastContext";
-import { returnsApi, registrationsApi, booksApi } from "../lib/apiService";
+import { returnsApi, booksApi, schoolsApi } from "../lib/apiService";
 
 interface ReturnedBook {
   id: number;
@@ -72,7 +72,7 @@ const ReturnedBooks: React.FC = () => {
 
   const loadSchools = async () => {
     try {
-      const response = await registrationsApi.getAll({ limit: 1000, status: 'approved' });
+      const response = await schoolsApi.getAll({ limit: 1000, status: 'approved' });
       setSchools(response.data);
     } catch (error: any) {
       showError('Failed to load schools');

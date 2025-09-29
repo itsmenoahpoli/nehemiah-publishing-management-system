@@ -64,7 +64,7 @@ const RequestReturn: React.FC = () => {
       });
       setSchools(response.data);
     } catch (error: any) {
-      showError('Failed to load schools');
+      showError(error?.message || 'Failed to load schools');
     }
   };
 

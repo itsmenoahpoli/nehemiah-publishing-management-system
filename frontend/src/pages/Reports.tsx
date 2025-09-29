@@ -4,6 +4,7 @@ import { BarChart3, TrendingUp, Package, Users, Download, Calendar } from "lucid
 import { reportsApi } from "../lib/apiService";
 import { useToast } from "../contexts/ToastContext";
 import * as XLSX from "xlsx";
+import Modal from "../components/Modal";
 
 const Reports: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -12,6 +13,11 @@ const Reports: React.FC = () => {
     endDate: new Date().toISOString().split('T')[0],
   });
   const { showSuccess, showError } = useToast();
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewTitle, setPreviewTitle] = useState("");
+  const [previewRows, setPreviewRows] = useState<any[]>([]);
+  const [previewSummary, setPreviewSummary] = useState<any[] | null>(null);
+  const [onConfirmDownload, setOnConfirmDownload] = useState<(() => Promise<void>) | null>(null);
 
   const handleDownloadSalesReport = async () => {
     try {
@@ -37,14 +43,20 @@ const Reports: React.FC = () => {
           TotalRevenue: response.data.totalRevenue || 0,
         },
       ];
-      
-      const wb = XLSX.utils.book_new();
-      const wsSummary = XLSX.utils.json_to_sheet(summary);
-      const wsSales = XLSX.utils.json_to_sheet(rows);
-      XLSX.utils.book_append_sheet(wb, wsSummary, "Summary");
-      XLSX.utils.book_append_sheet(wb, wsSales, "Sales");
-      XLSX.writeFile(wb, `Sales_Report_${dateRange.startDate}_to_${dateRange.endDate}.xlsx`);
-      showSuccess('Sales report downloaded successfully');
+
+      setPreviewTitle("Preview Sales Report");
+      setPreviewRows(rows);
+      setPreviewSummary(summary);
+      setOnConfirmDownload(() => async () => {
+        const wb = XLSX.utils.book_new();
+        const wsSummary = XLSX.utils.json_to_sheet(summary);
+        const wsSales = XLSX.utils.json_to_sheet(rows);
+        XLSX.utils.book_append_sheet(wb, wsSummary, "Summary");
+        XLSX.utils.book_append_sheet(wb, wsSales, "Sales");
+        XLSX.writeFile(wb, `Sales_Report_${dateRange.startDate}_to_${dateRange.endDate}.xlsx`);
+        showSuccess('Sales report downloaded successfully');
+      });
+      setPreviewOpen(true);
     } catch (error: any) {
       showError(error.message);
     } finally {
@@ -81,16 +93,22 @@ const Reports: React.FC = () => {
           LowStockCount: response.data.summary?.lowStockCount || 0,
         },
       ];
-      
-      const wb = XLSX.utils.book_new();
-      const wsSummary = XLSX.utils.json_to_sheet(summary);
-      const wsWarehouse = XLSX.utils.json_to_sheet(warehouse);
-      const wsSchools = XLSX.utils.json_to_sheet(schools);
-      XLSX.utils.book_append_sheet(wb, wsSummary, "Summary");
-      XLSX.utils.book_append_sheet(wb, wsWarehouse, "Warehouse");
-      XLSX.utils.book_append_sheet(wb, wsSchools, "Schools");
-      XLSX.writeFile(wb, `Inventory_Report_${dateRange.startDate}_to_${dateRange.endDate}.xlsx`);
-      showSuccess('Inventory report downloaded successfully');
+
+      setPreviewTitle("Preview Inventory Report");
+      setPreviewRows(warehouse.slice(0, 100));
+      setPreviewSummary(summary);
+      setOnConfirmDownload(() => async () => {
+        const wb = XLSX.utils.book_new();
+        const wsSummary = XLSX.utils.json_to_sheet(summary);
+        const wsWarehouse = XLSX.utils.json_to_sheet(warehouse);
+        const wsSchools = XLSX.utils.json_to_sheet(schools);
+        XLSX.utils.book_append_sheet(wb, wsSummary, "Summary");
+        XLSX.utils.book_append_sheet(wb, wsWarehouse, "Warehouse");
+        XLSX.utils.book_append_sheet(wb, wsSchools, "Schools");
+        XLSX.writeFile(wb, `Inventory_Report_${dateRange.startDate}_to_${dateRange.endDate}.xlsx`);
+        showSuccess('Inventory report downloaded successfully');
+      });
+      setPreviewOpen(true);
     } catch (error: any) {
       showError(error.message);
     } finally {
@@ -114,12 +132,18 @@ const Reports: React.FC = () => {
         Amount: t.amount,
         Status: t.status,
       }));
-      
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.json_to_sheet(rows);
-      XLSX.utils.book_append_sheet(wb, ws, "Transactions");
-      XLSX.writeFile(wb, `Transaction_Report_${dateRange.startDate}_to_${dateRange.endDate}.xlsx`);
-      showSuccess('Transaction report downloaded successfully');
+
+      setPreviewTitle("Preview Transaction Report");
+      setPreviewRows(rows);
+      setPreviewSummary(null);
+      setOnConfirmDownload(() => async () => {
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.json_to_sheet(rows);
+        XLSX.utils.book_append_sheet(wb, ws, "Transactions");
+        XLSX.writeFile(wb, `Transaction_Report_${dateRange.startDate}_to_${dateRange.endDate}.xlsx`);
+        showSuccess('Transaction report downloaded successfully');
+      });
+      setPreviewOpen(true);
     } catch (error: any) {
       showError(error.message);
     } finally {
@@ -141,12 +165,18 @@ const Reports: React.FC = () => {
         Status: s.isApproved ? "Approved" : "Pending",
         RegistrationDate: new Date(s.createdAt).toLocaleDateString(),
       }));
-      
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.json_to_sheet(rows);
-      XLSX.utils.book_append_sheet(wb, ws, "Schools");
-      XLSX.writeFile(wb, `School_Report_${dateRange.startDate}_to_${dateRange.endDate}.xlsx`);
-      showSuccess('School report downloaded successfully');
+
+      setPreviewTitle("Preview School Report");
+      setPreviewRows(rows);
+      setPreviewSummary(null);
+      setOnConfirmDownload(() => async () => {
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.json_to_sheet(rows);
+        XLSX.utils.book_append_sheet(wb, ws, "Schools");
+        XLSX.writeFile(wb, `School_Report_${dateRange.startDate}_to_${dateRange.endDate}.xlsx`);
+        showSuccess('School report downloaded successfully');
+      });
+      setPreviewOpen(true);
     } catch (error: any) {
       showError(error.message);
     } finally {
@@ -371,6 +401,85 @@ const Reports: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <Modal
+        isOpen={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        title={previewTitle}
+        size="xl"
+        footer={
+          <div className="flex items-center justify-end space-x-3">
+            <button
+              onClick={() => setPreviewOpen(false)}
+              className="btn-secondary"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={async () => {
+                if (onConfirmDownload) {
+                  await onConfirmDownload();
+                }
+                setPreviewOpen(false);
+              }}
+              className="btn-primary"
+            >
+              Continue to Download
+            </button>
+          </div>
+        }
+      >
+        {previewSummary && (
+          <div className="mb-4">
+            <h4 className="text-sm font-medium text-gray-700 mb-2">Summary</h4>
+            <div className="overflow-auto border rounded">
+              <table className="min-w-full text-sm">
+                <thead className="bg-gray-50">
+                  <tr>
+                    {Object.keys(previewSummary[0] || {}).map((key) => (
+                      <th key={key} className="px-3 py-2 text-left font-medium text-gray-700">{key}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {previewSummary.map((row, idx) => (
+                    <tr key={idx} className="odd:bg-white even:bg-gray-50">
+                      {Object.values(row).map((val: any, i) => (
+                        <td key={i} className="px-3 py-2 text-gray-900">{String(val)}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        <div>
+          <h4 className="text-sm font-medium text-gray-700 mb-2">Rows Preview</h4>
+          <p className="text-xs text-gray-500 mb-2">Showing up to 100 rows.</p>
+          <div className="overflow-auto border rounded">
+            <table className="min-w-full text-sm">
+              <thead className="bg-gray-50">
+                <tr>
+                  {Object.keys(previewRows[0] || {}).map((key) => (
+                    <th key={key} className="px-3 py-2 text-left font-medium text-gray-700">{key}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {previewRows.slice(0, 100).map((row, idx) => (
+                  <tr key={idx} className="odd:bg-white even:bg-gray-50">
+                    {Object.values(row).map((val: any, i) => (
+                      <td key={i} className="px-3 py-2 text-gray-900">{String(val)}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </Modal>
     </Layout>
   );
 };
