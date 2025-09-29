@@ -53,13 +53,14 @@ const BookRequests: React.FC = () => {
 
   const { showSuccess, showError } = useToast();
 
-  const loadRequests = async (page = 1, searchTerm = '') => {
+  const loadRequests = async (page = 1, searchTerm = '', status = '') => {
     try {
       setLoading(true);
       const response = await bookRequestsApi.getAll({
         page,
         limit: 10,
-        search: searchTerm
+        search: searchTerm,
+        status: status || undefined
       });
       setRequests(response.data);
       setPagination(response.pagination || pagination);
@@ -99,7 +100,7 @@ const BookRequests: React.FC = () => {
       showSuccess('Book request created successfully');
       setIsCreateModalOpen(false);
       setCreateFormData({ schoolId: '', bookId: '', quantity: '' });
-      loadRequests(pagination.page, search);
+      loadRequests(pagination.page, search, statusFilter);
     } catch (error: any) {
       showError(error.message);
     }
@@ -109,7 +110,7 @@ const BookRequests: React.FC = () => {
     try {
       await bookRequestsApi.approve(id);
       showSuccess('Book request approved successfully');
-      loadRequests(pagination.page, search);
+      loadRequests(pagination.page, search, statusFilter);
     } catch (error: any) {
       showError(error.message);
     }
@@ -120,7 +121,7 @@ const BookRequests: React.FC = () => {
       try {
         await bookRequestsApi.reject(id);
         showSuccess('Book request rejected successfully');
-        loadRequests(pagination.page, search);
+        loadRequests(pagination.page, search, statusFilter);
       } catch (error: any) {
         showError(error.message);
       }
@@ -143,16 +144,16 @@ const BookRequests: React.FC = () => {
 
   const handleSearch = (searchTerm: string) => {
     setSearch(searchTerm);
-    loadRequests(1, searchTerm);
+    loadRequests(1, searchTerm, statusFilter);
   };
 
   const handlePageChange = (page: number) => {
-    loadRequests(page, search);
+    loadRequests(page, search, statusFilter);
   };
 
   const handleStatusFilter = (status: string) => {
     setStatusFilter(status);
-    loadRequests(1, search);
+    loadRequests(1, search, status);
   };
 
   const getStatusColor = (status: string) => {

@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
-import { useNavigate } from "react-router-dom";
 import {
   Users,
   CreditCard,
   BookOpen,
-  Plus,
-  FileText,
-  BarChart3,
   Warehouse,
   School,
   DollarSign,
@@ -97,7 +93,6 @@ interface RecentActivity {
 }
 
 const Dashboard: React.FC = () => {
-  const navigate = useNavigate();
   const [overview, setOverview] = useState<DashboardOverview | null>(null);
   const [statusCounts, setStatusCounts] = useState<StatusCounts | null>(null);
   const [recentActivity, setRecentActivity] = useState<RecentActivity | null>(null);
@@ -135,24 +130,6 @@ const Dashboard: React.FC = () => {
     fetchDashboardData();
   }, []);
 
-  const handleQuickAction = (action: string) => {
-    switch (action) {
-      case 'add-book':
-        navigate('/maintenance');
-        break;
-      case 'process-request':
-        navigate('/book-requests');
-        break;
-      case 'generate-report':
-        navigate('/reports');
-        break;
-      case 'view-inventory':
-        navigate('/inventory');
-        break;
-      default:
-        break;
-    }
-  };
 
 
   const formatDate = (dateString: string) => {
@@ -239,13 +216,6 @@ const Dashboard: React.FC = () => {
       description: "Bill sales revenue"
     },
     {
-      name: "School Revenue",
-      value: formatCurrency(overview.totalSchoolRevenue),
-      icon: ShoppingCart,
-      color: "bg-purple-500",
-      description: "School sales revenue"
-    },
-    {
       name: "Pending Registrations",
       value: overview.pendingRegistrations,
       icon: Users,
@@ -279,36 +249,6 @@ const Dashboard: React.FC = () => {
     }
   ];
 
-  const quickActions = [
-    {
-      name: "Add New Book",
-      icon: Plus,
-      color: "bg-blue-600",
-      action: "add-book",
-      description: "Add a new book to the system"
-    },
-    {
-      name: "Process Book Request",
-      icon: FileText,
-      color: "bg-yellow-600",
-      action: "process-request",
-      description: "Review and approve book requests"
-    },
-    {
-      name: "Generate Report",
-      icon: BarChart3,
-      color: "bg-green-600",
-      action: "generate-report",
-      description: "Create system reports"
-    },
-    {
-      name: "View Inventory",
-      icon: Warehouse,
-      color: "bg-purple-600",
-      action: "view-inventory",
-      description: "Check stock levels"
-    },
-  ];
 
   return (
     <Layout>
@@ -321,7 +261,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Overview Statistics Cards */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {overviewCards.map((card) => (
             <div key={card.name} className="card hover:shadow-lg transition-shadow">
               <div className="flex flex-col items-center text-center">
@@ -369,85 +309,61 @@ const Dashboard: React.FC = () => {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          {/* Recent Activity */}
-          <div className="card lg:col-span-2">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Recent Activity
-            </h3>
-            <div className="space-y-4">
-              {recentActivity?.recentBills.slice(0, 3).map((bill) => (
-                <div key={bill.id} className="flex items-center space-x-3">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                      <CreditCard className="h-4 w-4 text-blue-600" />
-                    </div>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900">
-                      Bill #{bill.billNumber} - {bill.customerName}
-                    </p>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm text-gray-500">
-                        {formatCurrency(bill.totalAmount)}
-                      </span>
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(bill.status)}`}>
-                        {getStatusIcon(bill.status)}
-                        <span className="ml-1 capitalize">{bill.status}</span>
-                      </span>
-                    </div>
-                    <p className="text-xs text-gray-400">{formatDate(bill.createdAt)}</p>
+        {/* Recent Activity */}
+        <div className="card">
+          <h3 className="text-lg font-medium text-gray-900 mb-4">
+            Recent Activity
+          </h3>
+          <div className="space-y-4">
+            {recentActivity?.recentBills.slice(0, 3).map((bill) => (
+              <div key={bill.id} className="flex items-center space-x-3">
+                <div className="flex-shrink-0">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <CreditCard className="h-4 w-4 text-blue-600" />
                   </div>
                 </div>
-              ))}
-              
-              {recentActivity?.recentTransactions.slice(0, 2).map((transaction) => (
-                <div key={transaction.id} className="flex items-center space-x-3">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                      <ShoppingCart className="h-4 w-4 text-green-600" />
-                    </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900">
+                    Bill #{bill.billNumber} - {bill.customerName}
+                  </p>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-gray-500">
+                      {formatCurrency(bill.totalAmount)}
+                    </span>
+                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(bill.status)}`}>
+                      {getStatusIcon(bill.status)}
+                      <span className="ml-1 capitalize">{bill.status}</span>
+                    </span>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900">
-                      Transaction #{transaction.transactionNumber}
-                    </p>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm text-gray-500">
-                        {formatCurrency(transaction.totalAmount)} • {transaction.bookCount} books
-                      </span>
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(transaction.status)}`}>
-                        {getStatusIcon(transaction.status)}
-                        <span className="ml-1 capitalize">{transaction.status}</span>
-                      </span>
-                    </div>
-                    <p className="text-xs text-gray-400">{formatDate(transaction.createdAt)}</p>
+                  <p className="text-xs text-gray-400">{formatDate(bill.createdAt)}</p>
+                </div>
+              </div>
+            ))}
+            
+            {recentActivity?.recentTransactions.slice(0, 2).map((transaction) => (
+              <div key={transaction.id} className="flex items-center space-x-3">
+                <div className="flex-shrink-0">
+                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                    <ShoppingCart className="h-4 w-4 text-green-600" />
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="card">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Quick Actions
-            </h3>
-            <div className="grid grid-cols-1 gap-3">
-              {quickActions.map((action) => (
-                <button
-                  key={action.action}
-                  onClick={() => handleQuickAction(action.action)}
-                  className={`w-full p-3 rounded-lg text-white ${action.color} hover:opacity-90 transition-opacity flex items-center space-x-3`}
-                >
-                  <action.icon className="h-5 w-5" />
-                  <div className="text-left">
-                    <div className="font-medium">{action.name}</div>
-                    <div className="text-xs opacity-75">{action.description}</div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900">
+                    Transaction #{transaction.transactionNumber}
+                  </p>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-gray-500">
+                      {formatCurrency(transaction.totalAmount)} • {transaction.bookCount} books
+                    </span>
+                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(transaction.status)}`}>
+                      {getStatusIcon(transaction.status)}
+                      <span className="ml-1 capitalize">{transaction.status}</span>
+                    </span>
                   </div>
-                </button>
-              ))}
-            </div>
+                  <p className="text-xs text-gray-400">{formatDate(transaction.createdAt)}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 

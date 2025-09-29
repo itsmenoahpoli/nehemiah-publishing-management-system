@@ -137,7 +137,7 @@ const ReturnedBooks: React.FC = () => {
     try {
       const data = {
         schoolId: parseInt(formData.schoolId),
-        items: formData.items
+        returnedBookDetails: formData.items
           .filter(item => item.bookId && item.quantity)
           .map(item => ({
             bookId: parseInt(item.bookId),

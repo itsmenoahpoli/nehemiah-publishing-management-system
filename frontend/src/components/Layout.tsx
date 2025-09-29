@@ -16,6 +16,8 @@ import {
   X,
   LogOut,
   User,
+  School,
+  ShoppingCart,
 } from "lucide-react";
 
 interface LayoutProps {
@@ -40,11 +42,18 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       ? [
           { name: "Maintenance", href: "/maintenance", icon: Settings },
           { name: "Stock Entries", href: "/stock-entries", icon: Plus },
+          { name: "Schools", href: "/schools", icon: School },
           {
             name: "Registration Approvals",
             href: "/registration-approvals",
             icon: Users,
           },
+        ]
+      : []),
+    ...(user?.role === "CLERK"
+      ? [
+          { name: "Request Order", href: "/request-order", icon: ShoppingCart },
+          { name: "Request Return", href: "/request-return", icon: RotateCcw },
         ]
       : []),
   ];

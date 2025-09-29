@@ -106,7 +106,12 @@ const BillingPayment: React.FC = () => {
     e.preventDefault();
     try {
       const data = {
-        customerId: 1, // This would be created or found based on customer info
+        customer: {
+          name: formData.customerName,
+          email: formData.customerEmail,
+          phone: formData.customerPhone,
+          address: formData.customerAddress,
+        },
         items: formData.items
           .filter(item => item.bookId && item.quantity)
           .map(item => ({

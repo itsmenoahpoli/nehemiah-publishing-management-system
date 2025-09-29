@@ -130,6 +130,16 @@ export const usersApi = {
   delete: (id: number) => ApiService.delete(`/users/${id}`),
 };
 
+export const schoolsApi = {
+  getAll: (params?: PaginationParams & { status?: string }) =>
+    ApiService.get('/schools', params),
+  getById: (id: number) => ApiService.get(`/schools/${id}`),
+  create: (data: any) => ApiService.post('/schools', data),
+  update: (id: number, data: any) => ApiService.put(`/schools/${id}`, data),
+  delete: (id: number) => ApiService.delete(`/schools/${id}`),
+  approve: (id: number) => ApiService.post(`/schools/${id}/approve`),
+};
+
 export const dashboardApi = {
   getOverview: () => ApiService.get('/dashboard/overview'),
   getRevenueCharts: (period?: 'week' | 'month' | 'year') => 

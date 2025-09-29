@@ -17,6 +17,9 @@ import ReturnedBooks from "./pages/ReturnedBooks";
 import Reports from "./pages/Reports";
 import RegistrationApprovals from "./pages/RegistrationApprovals";
 import OrderHistory from "./pages/OrderHistory";
+import Schools from "./pages/Schools";
+import RequestOrder from "./pages/RequestOrder";
+import RequestReturn from "./pages/RequestReturn";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -105,6 +108,30 @@ function App() {
               element={
                 <ProtectedRoute>
                   <OrderHistory />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/schools"
+              element={
+                <ProtectedRoute requiredRole="ADMIN">
+                  <Schools />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/request-order"
+              element={
+                <ProtectedRoute requiredRole="CLERK">
+                  <RequestOrder />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/request-return"
+              element={
+                <ProtectedRoute requiredRole="CLERK">
+                  <RequestReturn />
                 </ProtectedRoute>
               }
             />
