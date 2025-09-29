@@ -12,10 +12,12 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
+  User,
 } from "lucide-react";
 import { dashboardApi } from "../lib/apiService";
 import SimpleChart from "../components/SimpleChart";
 import { formatCurrency } from "../lib/utils";
+import { useAuth } from "../contexts/AuthContext";
 
 interface DashboardOverview {
   totalBooks: number;
@@ -93,6 +95,7 @@ interface RecentActivity {
 }
 
 const Dashboard: React.FC = () => {
+  const { user, loading: authLoading } = useAuth();
   const [overview, setOverview] = useState<DashboardOverview | null>(null);
   const [statusCounts, setStatusCounts] = useState<StatusCounts | null>(null);
   const [recentActivity, setRecentActivity] = useState<RecentActivity | null>(null);
@@ -104,7 +107,15 @@ const Dashboard: React.FC = () => {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        
+        if (user?.role === "CLERK") {
+          setOverview(null);
+          setStatusCounts(null);
+          setRecentActivity(null);
+          setTopSellingBooks([]);
+          setBooksByPublisher([]);
+          return;
+        }
+
         const [
           overviewResponse,
           recentActivityResponse,
@@ -128,7 +139,7 @@ const Dashboard: React.FC = () => {
     };
 
     fetchDashboardData();
-  }, []);
+  }, [user?.role]);
 
 
 
@@ -173,11 +184,29 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <Layout>
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (user?.role === "CLERK") {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="card max-w-md w-full text-center">
+            <div className="mx-auto mb-3 w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center">
+              <User className="h-6 w-6 text-blue-600" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900">{user.firstName} {user.lastName}</h1>
+            <p className="text-gray-700">{user.email}</p>
+            <p className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 mt-2">{user.role}</p>
+            <p className="text-gray-500 mt-2">{new Date().toLocaleString()}</p>
+          </div>
         </div>
       </Layout>
     );
@@ -253,11 +282,14 @@ const Dashboard: React.FC = () => {
   return (
     <Layout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600">
-            Welcome to Nehemiah Publishing Management System
-          </p>
+        <div className="card flex items-start space-x-3">
+          <div className="w-10 h-10 rounded-md bg-blue-50 flex items-center justify-center">
+            <User className="h-5 w-5 text-blue-600" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+            <p className="text-gray-600">Welcome to Nehemiah Publishing Management System</p>
+          </div>
         </div>
 
         {/* Overview Statistics Cards */}

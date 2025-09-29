@@ -157,7 +157,7 @@ router.get(
  *         description: Internal server error
  */
 router.get(
-  "/:id",
+  "/:id(\\d+)",
   authenticateToken,
   requireAnyRole,
   async (req: Request, res: Response) => {
@@ -445,7 +445,7 @@ router.post(
  *         description: Internal server error
  */
 router.put(
-  "/:id",
+  "/:id(\\d+)",
   authenticateToken,
   requireAdmin,
   [
@@ -537,7 +537,7 @@ router.put(
  *         description: Internal server error
  */
 router.delete(
-  "/:id",
+  "/:id(\\d+)",
   authenticateToken,
   requireAdmin,
   async (req: Request, res: Response) => {
@@ -607,14 +607,10 @@ router.get(
       const { page = 1, limit = 10, search = "" } = req.query;
       const skip = (Number(page) - 1) * Number(limit);
 
-      const where = {
-        isActive: true,
-        ...(search
-          ? {
-              name: { contains: search as string },
-            }
-          : {}),
-      };
+      const where: any = {};
+      if (typeof search === "string" && search.trim().length > 0) {
+        where.name = { contains: search, mode: "insensitive" as any };
+      }
 
       const [authors, total] = await Promise.all([
         prisma.author.findMany({
@@ -622,6 +618,7 @@ router.get(
           skip,
           take: Number(limit),
           orderBy: { name: "asc" },
+          select: { id: true, name: true },
         }),
         prisma.author.count({ where }),
       ]);
@@ -636,9 +633,9 @@ router.get(
           totalPages: Math.ceil(total / Number(limit)),
         },
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Get authors error:", error);
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({ message: error?.message || "Internal server error" });
     }
   }
 );

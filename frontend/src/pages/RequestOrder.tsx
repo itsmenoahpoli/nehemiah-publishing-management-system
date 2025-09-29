@@ -5,6 +5,7 @@ import Modal from "../components/Modal";
 import FormField from "../components/FormField";
 import { useToast } from "../contexts/ToastContext";
 import { bookRequestsApi, booksApi, schoolsApi } from "../lib/apiService";
+import { formatCurrency } from "../lib/utils";
 
 interface Book {
   id: number;
@@ -194,7 +195,7 @@ const RequestOrder: React.FC = () => {
                   <h3 className="font-medium text-gray-900 mb-2">{book.title}</h3>
                   <p className="text-sm text-gray-500 mb-2">ISBN: {book.isbn}</p>
                   <p className="text-sm text-gray-500 mb-2">Publisher: {book.publisher}</p>
-                  <p className="text-lg font-semibold text-blue-600">${book.price.toFixed(2)}</p>
+                  <p className="text-lg font-semibold text-blue-600">{formatCurrency(book.price)}</p>
                 </div>
               ))}
             </div>
@@ -249,7 +250,7 @@ const RequestOrder: React.FC = () => {
                         { value: '', label: 'Select a book' },
                         ...books.map(book => ({
                           value: book.id.toString(),
-                          label: `${book.title} - $${book.price.toFixed(2)}`
+                          label: `${book.title} - ${formatCurrency(book.price)}`
                         }))
                       ]}
                     />
@@ -294,12 +295,12 @@ const RequestOrder: React.FC = () => {
                   {getSelectedBooks().map((book, index) => (
                     <div key={index} className="flex justify-between text-sm">
                       <span>{book.title} x {book.quantity}</span>
-                      <span>${(book.price * book.quantity).toFixed(2)}</span>
+                      <span>{formatCurrency(Number(book.price) * Number(book.quantity))}</span>
                     </div>
                   ))}
                   <div className="border-t pt-2 flex justify-between font-medium">
                     <span>Total:</span>
-                    <span>${getTotalAmount().toFixed(2)}</span>
+                    <span>{formatCurrency(getTotalAmount())}</span>
                   </div>
                 </div>
               </div>
