@@ -34,7 +34,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { name: "Dashboard", href: "/dashboard", icon: Home },
     { name: "Inventory", href: "/inventory", icon: Package },
     { name: "Book Requests", href: "/book-requests", icon: FileText },
-    { name: "Billing & Payment", href: "/billing-payment", icon: CreditCard },
+    ...(user?.role === "CLERK" ? [] : [{ name: "Billing & Payment", href: "/billing-payment", icon: CreditCard }]),
     { name: "Returned Books", href: "/returned-books", icon: RotateCcw },
     { name: "Reports", href: "/reports", icon: BarChart3 },
     { name: "Order History", href: "/order-history", icon: History },
